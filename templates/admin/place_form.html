@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Add place' if mode == 'new' else 'Edit place' }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item active">{{ 'Add place' if mode == 'new' else 'Edit place' }}</li>
+  </ol>
+</nav>
+
+<h1 class="h3 mb-4">
+  {% if mode == 'new' %}Add a new place{% else %}Edit: {{ place.name }}{% endif %}
+</h1>
+
+<form method="post" novalidate class="row g-3">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <div class="col-12">
+    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+    <input type="text" id="name" name="name" maxlength="120"
+           class="form-control {{ 'is-invalid' if errors.get('name') }}"
+           value="{{ values.get('name', '') }}">
+    <div class="invalid-feedback">{{ errors.get('name') }}</div>
+  </div>
+
+  <div class="col-12">
+    <label class="form-label d-block">Categories <span class="text-danger">*</span></label>
+    <div class="{{ 'is-invalid' if errors.get('categories') }}">
+      {% for c in categories %}
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" id="cat-{{ c.id }}" name="categories"
+                 value="{{ c.id }}" {% if c.id in selected %}checked{% endif %}>
+          <label class="form-check-label" for="cat-{{ c.id }}">{{ c.name }}</label>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="invalid-feedback">{{ errors.get('categories') }}</div>
+  </div>
+
+  <div class="col-md-4">
+    <label for="distance_km" class="form-label">Distance from Akuressa (km) <span class="text-danger">*</span></label>
+    <input type="number" step="any" id="distance_km" name="distance_km"
+           class="form-control {{ 'is-invalid' if errors.get('distance_km') }}"
+           value="{{ values.get('distance_km', '') }}">
+    <div class="invalid-feedback">{{ errors.get('distance_km') }}</div>
+  </div>
+
+  <div class="col-md-4">
+    <label for="latitude" class="form-label">Latitude <span class="text-danger">*</span></label>
+    <input type="text" inputmode="decimal" id="latitude" name="latitude"
+           class="form-control {{ 'is-invalid' if errors.get('latitude') }}"
+           value="{{ values.get('latitude', '') }}" placeholder="e.g. 5.9485">
+    <div class="invalid-feedback">{{ errors.get('latitude') }}</div>
+  </div>
+
+  <div class="col-md-4">
+    <label for="longitude" class="form-label">Longitude <span class="text-danger">*</span></label>
+    <input type="text" inputmode="decimal" id="longitude" name="longitude"
+           class="form-control {{ 'is-invalid' if errors.get('longitude') }}"
+           value="{{ values.get('longitude', '') }}" placeholder="e.g. 80.5353">
+    <div class="invalid-feedback">{{ errors.get('longitude') }}</div>
+  </div>
+  <div class="col-12 form-text mt-0">
+    Tip: in Google Maps, right-click the place and click the two numbers at the top of the menu to copy them.
+    The first number is the latitude.
+  </div>
+
+  <div class="col-12">
+    <label for="description" class="form-label">Description</label>
+    <textarea id="description" name="description" rows="4" class="form-control">{{ values.get('description', '') }}</textarea>
+  </div>
+
+  <div class="col-md-6">
+    <label for="opening_times" class="form-label">Opening times</label>
+    <input type="text" id="opening_times" name="opening_times" maxlength="200"
+           class="form-control {{ 'is-invalid' if errors.get('opening_times') }}"
+           value="{{ values.get('opening_times', '') }}">
+    <div class="invalid-feedback">{{ errors.get('opening_times') }}</div>
+  </div>
+
+  <div class="col-md-6">
+    <label for="visit_minutes" class="form-label">Suggested visit time (minutes)</label>
+    <input type="number" id="visit_minutes" name="visit_minutes"
+           class="form-control {{ 'is-invalid' if errors.get('visit_minutes') }}"
+           value="{{ values.get('visit_minutes', '') }}">
+    <div class="invalid-feedback">{{ errors.get('visit_minutes') }}</div>
+  </div>
+
+  <div class="col-12">
+    <label for="travel_tips" class="form-label">Travel tips</label>
+    <textarea id="travel_tips" name="travel_tips" rows="3" class="form-control">{{ values.get('travel_tips', '') }}</textarea>
+  </div>
+
+  <div class="col-12">
+    <label for="image_url" class="form-label">Image address (optional)</label>
+    <input type="text" id="image_url" name="image_url" maxlength="300"
+           class="form-control {{ 'is-invalid' if errors.get('image_url') }}"
+           value="{{ values.get('image_url', '') }}" placeholder="https://...">
+    <div class="invalid-feedback">{{ errors.get('image_url') }}</div>
+    <div class="form-text">Only use images you have permission to use, and credit the source (SRS section 6).</div>
+  </div>
+
+  <div class="col-12 d-flex gap-2">
+    <button type="submit" class="btn btn-success">Save place</button>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}
