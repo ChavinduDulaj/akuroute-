@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ place.name }}{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('public.home') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('public.places') }}">Places</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ place.name }}</li>
+  </ol>
+</nav>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <h1 class="h2">{{ place.name }}</h1>
+    <p>
+      {% for c in place.categories %}
+        <span class="badge text-bg-success me-1">{{ c.name }}</span>
+      {% endfor %}
+    </p>
+
+    {% if place.image_url %}
+      <img src="{{ place.image_url }}" alt="{{ place.name }}" class="img-fluid rounded mb-3" loading="lazy">
+    {% endif %}
+
+    <h2 class="h5">About</h2>
+    <p>{{ place.description or "No description available yet." }}</p>
+
+    <h2 class="h5">Travel tips</h2>
+    <p>{{ place.travel_tips or "No travel tips available yet." }}</p>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card mb-3">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Distance from Akuressa:</strong> {{ place.distance_km|round(1) }} km</li>
+        <li class="list-group-item"><strong>Opening times:</strong> {{ place.opening_times or "Not available" }}</li>
+        <li class="list-group-item"><strong>Suggested visit time:</strong> about {{ place.visit_minutes }} minutes</li>
+      </ul>
+    </div>
+
+    <div id="map" class="map-small rounded border mb-3"></div>
+
+    <div class="alert alert-warning small">
+      Travel times, opening hours and distances are estimates. Please verify them before travelling.
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const lat = {{ place.latitude|tojson }};
+  const lng = {{ place.longitude|tojson }};
+  const map = L.map('map').setView([lat, lng], 14);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  L.marker([lat, lng]).addTo(map).bindPopup({{ place.name|tojson }}).openPopup();
+</script>
+{% endblock %}

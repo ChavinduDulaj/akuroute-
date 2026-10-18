@@ -28,7 +28,10 @@
   <div class="col-md-4">
     <div class="card h-100 shadow-sm">
       <div class="card-body">
-        <h3 class="h5 card-title">{{ p.name }}</h3>
+        <h3 class="h5 card-title">
+  <a href="{{ url_for('public.place_detail', place_id=p.id) }}"
+     class="stretched-link text-decoration-none">{{ p.name }}</a>
+</h3>
         <p class="mb-2">
           {% for c in p.categories %}<span class="badge text-bg-success me-1">{{ c.name }}</span>{% endfor %}
         </p>

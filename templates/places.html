@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Places{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Places of interest</h1>
+
+<form method="get" action="{{ url_for('public.places') }}" class="mb-4">
+  <div class="d-flex flex-wrap gap-2 align-items-center">
+    {% for c in categories %}
+      <input type="checkbox" class="btn-check" id="cat-{{ c.id }}" name="cat"
+             value="{{ c.name }}" autocomplete="off"
+             {% if c.name in selected %}checked{% endif %}>
+      <label class="btn btn-outline-success" for="cat-{{ c.id }}">{{ c.name }}</label>
+    {% endfor %}
+    <button type="submit" class="btn btn-success">Apply filter</button>
+    {% if selected %}
+      <a href="{{ url_for('public.places') }}" class="btn btn-link">Clear</a>
+    {% endif %}
+  </div>
+</form>
+
+<p class="text-muted">
+  Showing {{ places|length }} place{{ '' if places|length == 1 else 's' }}
+  {% if selected %}in: {{ selected|join(', ') }}{% endif %}
+</p>
+
+<div class="row g-3">
+  {% for p in places %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 card-title">
+          <a href="{{ url_for('public.place_detail', place_id=p.id) }}"
+             class="stretched-link text-decoration-none">{{ p.name }}</a>
+        </h2>
+        <p class="mb-2">
+          {% for c in p.categories %}
+            <span class="badge text-bg-success me-1">{{ c.name }}</span>
+          {% endfor %}
+        </p>
+        <p class="card-text text-muted mb-0">{{ p.distance_km|round(1) }} km from Akuressa</p>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <div class="alert alert-info">
+      No places match your filter. Try removing a category or
+      <a href="{{ url_for('public.places') }}">clear the filter</a>.
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -15,3 +15,6 @@
   --bs-btn-hover-bg: var(--aku-green);
   --bs-btn-hover-border-color: var(--aku-green);
 }
+
+.map-large { height: 70vh; min-height: 350px; }
+.map-small { height: 300px; }
