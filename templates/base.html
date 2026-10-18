@@ -36,6 +36,17 @@
                href="{{ url_for('plan.view') }}">My Plan
               {% if plan_count %}<span class="badge text-bg-light">{{ plan_count }}</span>{% endif %}</a>
           </li>
+                    {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin.dashboard') }}">Admin</a>
+          </li>
+          <li class="nav-item">
+            <form method="post" action="{{ url_for('admin.logout') }}" class="d-inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-link nav-link">Log out</button>
+            </form>
+          </li>
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -58,6 +69,7 @@
     <div class="container small text-muted">
       <strong>Please note:</strong> travel times, opening hours and distances are estimates only.
       Verify them independently before travelling, especially to remote locations.
+            <div class="mt-1"><a class="text-muted" href="{{ url_for('admin.login') }}">Admin login</a></div>
     </div>
   </footer>
 

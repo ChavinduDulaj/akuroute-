@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Admin dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Admin dashboard</h1>
+  <span class="text-muted">Logged in as <strong>{{ current_user.username }}</strong></span>
+</div>
+
+<div class="alert alert-info">
+  Adding, editing and deleting places is built in Step 8. For now, this page lists
+  everything stored in the database.
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr><th>#</th><th>Name</th><th>Categories</th><th class="text-end">Distance (km)</th></tr>
+    </thead>
+    <tbody>
+      {% for p in places %}
+      <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.name }}</td>
+        <td>{% for c in p.categories %}<span class="badge text-bg-success me-1">{{ c.name }}</span>{% endfor %}</td>
+        <td class="text-end">{{ p.distance_km|round(1) }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="text-center text-muted">No places in the database yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

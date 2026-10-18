@@ -24,7 +24,9 @@ def create_app():
     db.init_app(app)
     csrf.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = "admin.login"     # where to send logged-out admins (Step 7)
+    login_manager.login_view = "admin.login"
+    login_manager.login_message = "Please log in to access the admin area."
+    login_manager.login_message_category = "warning"     
 
     @login_manager.user_loader
     def load_user(user_id):
