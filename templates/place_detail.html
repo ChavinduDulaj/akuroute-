@@ -43,6 +43,17 @@
       </ul>
     </div>
 
+        {% if in_plan %}
+      <div class="alert alert-success py-2">
+        This place is in your visit plan. <a href="{{ url_for('plan.view') }}">View plan</a>
+      </div>
+    {% else %}
+      <form method="post" action="{{ url_for('plan.add', pid=place.id) }}" class="mb-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-success w-100">+ Add to my visit plan</button>
+      </form>
+    {% endif %}
+
     <div id="map" class="map-small rounded border mb-3"></div>
 
     <div class="alert alert-warning small">

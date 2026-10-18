@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}My Visit Plan{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">My one-day visit plan</h1>
+  <button class="btn btn-outline-secondary no-print" onclick="window.print()">Print plan</button>
+</div>
+
+<p class="no-print">
+  <a class="text-decoration-none" data-bs-toggle="collapse" href="#help" role="button">How does this work?</a>
+</p>
+<div class="collapse mb-3 no-print" id="help">
+  <div class="card card-body small">
+    <ol class="mb-0">
+      <li>Open a place from <a href="{{ url_for('public.places') }}">Places</a> and press <em>Add to my visit plan</em>.</li>
+      <li>Come back here. Use the arrows to change the order of your stops.</li>
+      <li>Set your start time. Arrival and leaving times are updated automatically.</li>
+      <li>Press <em>Print plan</em> to take your itinerary with you.</li>
+    </ol>
+    <p class="mt-2 mb-0">Times include travel at about 30&nbsp;km/h, the suggested visit time at each place,
+       and a {{ 15 }}-minute buffer after every stop. This planner covers a single day only.</p>
+  </div>
+</div>
+
+{% if itinerary.stops %}
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="card text-center"><div class="card-body py-3">
+      <div class="fs-3 fw-bold">{{ itinerary.stops|length }}</div><div class="small text-muted">Places</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-center"><div class="card-body py-3">
+      <div class="fs-3 fw-bold">{{ itinerary.total_km }} km</div><div class="small text-muted">Approx. total distance</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-center"><div class="card-body py-3">
+      <div class="fs-3 fw-bold">{{ itinerary.duration }}</div><div class="small text-muted">Total time</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-center"><div class="card-body py-3">
+      <div class="fs-3 fw-bold">{{ itinerary.end }}</div><div class="small text-muted">Back in Akuressa</div></div></div></div>
+  </div>
+
+  {% if itinerary.late %}
+  <div class="alert alert-warning">
+    This plan finishes after {{ itinerary.latest_end }}. Consider removing a place or starting earlier.
+  </div>
+  {% endif %}
+
+  <form method="get" action="{{ url_for('plan.view') }}" class="row g-2 align-items-end mb-4 no-print">
+    <div class="col-auto">
+      <label for="start" class="form-label mb-0">Start time</label>
+      <input type="time" id="start" name="start" value="{{ itinerary.start }}" class="form-control">
+    </div>
+    <div class="col-auto"><button class="btn btn-success" type="submit">Update times</button></div>
+  </form>
+  <p class="d-none d-print-block">Start time: {{ itinerary.start }} from Akuressa</p>
+
+  <ol class="list-group list-group-numbered mb-4">
+    {% for s in itinerary.stops %}
+    <li class="list-group-item">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">
+            <a href="{{ url_for('public.place_detail', place_id=s.place.id) }}" class="text-decoration-none">{{ s.place.name }}</a>
+          </div>
+          <div class="small text-muted">
+            Travel: {{ s.leg_km }} km, about {{ s.travel_min }} min
+            &middot; Arrive <strong>{{ s.arrive }}</strong>
+            &middot; Leave <strong>{{ s.leave }}</strong>
+            &middot; Stay about {{ s.place.visit_minutes }} min
+          </div>
+          <div class="small">{{ s.place.opening_times or "Opening times not available" }}</div>
+        </div>
+        <div class="btn-group btn-group-sm no-print" role="group" aria-label="Plan actions">
+          <form method="post" action="{{ url_for('plan.move', pid=s.place.id, direction='up') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-outline-secondary" {% if loop.first %}disabled{% endif %} aria-label="Move up">&uarr;</button>
+          </form>
+          <form method="post" action="{{ url_for('plan.move', pid=s.place.id, direction='down') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-outline-secondary" {% if loop.last %}disabled{% endif %} aria-label="Move down">&darr;</button>
+          </form>
+          <form method="post" action="{{ url_for('plan.remove', pid=s.place.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-outline-danger">Remove</button>
+          </form>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+    <li class="list-group-item list-group-item-light">
+      Return to Akuressa: {{ itinerary.return_km }} km &middot; Home by <strong>{{ itinerary.end }}</strong>
+    </li>
+  </ol>
+
+  <form method="post" action="{{ url_for('plan.clear') }}" class="no-print mb-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-outline-danger btn-sm">Clear whole plan</button>
+  </form>
+
+{% else %}
+  <div class="alert alert-info">
+    Your plan is empty. Browse the <a href="{{ url_for('public.places') }}">places</a>,
+    open one and press <em>Add to my visit plan</em>.
+  </div>
+{% endif %}
+
+<div class="alert alert-warning small">
+  Travel times, opening hours and distances are estimates only. Please verify them
+  independently before travelling, particularly to remote or less-visited locations.
+</div>
+{% endblock %}

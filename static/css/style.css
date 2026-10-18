@@ -18,3 +18,8 @@
 
 .map-large { height: 70vh; min-height: 350px; }
 .map-small { height: 300px; }
+
+@media print {
+  .navbar, .no-print, .alert-dismissible .btn-close { display: none !important; }
+  body { font-size: 12pt; }
+}

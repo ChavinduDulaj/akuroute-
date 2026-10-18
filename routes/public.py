@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session
 from models import db, Category, Place
 
 bp = Blueprint("public", __name__)
@@ -25,8 +25,9 @@ def places():
 
 @bp.route("/places/<int:place_id>")
 def place_detail(place_id):
-    place = db.get_or_404(Place, place_id)            # shows a 404 page if the ID doesn't exist
-    return render_template("place_detail.html", place=place)
+    place = db.get_or_404(Place, place_id)
+    in_plan = place.id in session.get("plan", [])
+    return render_template("place_detail.html", place=place, in_plan=in_plan)
 
 
 @bp.route("/map")

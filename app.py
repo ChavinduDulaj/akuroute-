@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 
+from flask import Flask, session
 from flask import Flask
 from flask_login import LoginManager
 from flask_wtf import CSRFProtect
@@ -35,6 +36,10 @@ def create_app():
     app.register_blueprint(public_bp)
     app.register_blueprint(plan_bp)
     app.register_blueprint(admin_bp)
+
+    @app.context_processor
+    def inject_plan_count():
+        return {"plan_count": len(session.get("plan", []))}
 
     return app
 

@@ -33,7 +33,8 @@
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'plan.view' %}active{% endif %}"
-               href="{{ url_for('plan.view') }}">My Plan</a>
+               href="{{ url_for('plan.view') }}">My Plan
+              {% if plan_count %}<span class="badge text-bg-light">{{ plan_count }}</span>{% endif %}</a>
           </li>
         </ul>
       </div>
