@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero rounded-3 p-4 p-md-5 mb-4 text-white">
+  <h1 class="display-5 fw-bold">Plan a day around Akuressa</h1>
+  <p class="lead mb-4">Discover temples, heritage sites and nature spots within 25&nbsp;km,
+     then build a simple one-day visit plan.</p>
+  <a href="{{ url_for('public.places') }}" class="btn btn-light btn-lg me-2">Browse places</a>
+  <a href="{{ url_for('public.map_view') }}" class="btn btn-outline-light btn-lg">View map</a>
+</section>
+
+<h2 class="h4 mb-3">Explore by category</h2>
+<div class="row g-3 mb-5">
+  {% for c in categories %}
+  <div class="col-6 col-md-3">
+    <a class="btn btn-outline-success w-100 py-3"
+       href="{{ url_for('public.places', cat=c.name) }}">{{ c.name }}</a>
+  </div>
+  {% else %}
+  <p class="text-muted">No categories yet.</p>
+  {% endfor %}
+</div>
+
+<h2 class="h4 mb-3">Closest to Akuressa</h2>
+<div class="row g-3">
+  {% for p in nearest %}
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h3 class="h5 card-title">{{ p.name }}</h3>
+        <p class="mb-2">
+          {% for c in p.categories %}<span class="badge text-bg-success me-1">{{ c.name }}</span>{% endfor %}
+        </p>
+        <p class="card-text text-muted">{{ p.distance_km|round(0)|int }} km from Akuressa</p>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <p class="text-muted">No places have been added yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

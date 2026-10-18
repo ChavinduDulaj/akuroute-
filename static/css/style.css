@@ -1,0 +1,17 @@
+:root {
+  --aku-green: #1f6f50;
+  --aku-green-dark: #154d38;
+}
+
+.bg-akuroute { background-color: var(--aku-green); }
+
+.hero {
+  background: linear-gradient(135deg, var(--aku-green), var(--aku-green-dark));
+}
+
+.btn-outline-success {
+  --bs-btn-color: var(--aku-green);
+  --bs-btn-border-color: var(--aku-green);
+  --bs-btn-hover-bg: var(--aku-green);
+  --bs-btn-hover-border-color: var(--aku-green);
+}
