@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, session
 from models import db, Category, Place
+from sqlalchemy.orm import selectinload
 
 bp = Blueprint("public", __name__)
 
@@ -7,14 +8,14 @@ bp = Blueprint("public", __name__)
 @bp.route("/")
 def home():
     categories = Category.query.order_by(Category.name).all()
-    nearest = Place.query.order_by(Place.distance_km).limit(3).all()
+    nearest = (Place.query.options(selectinload(Place.categories)).order_by(Place.distance_km).limit(3).all())
     return render_template("index.html", categories=categories, nearest=nearest)
 
 
 @bp.route("/places")
 def places():
     selected = request.args.getlist("cat")            # e.g. ?cat=Nature&cat=Heritage
-    query = Place.query
+    query = Place.query.options(selectinload(Place.categories))
     if selected:
         query = query.filter(Place.categories.any(Category.name.in_(selected)))
     results = query.order_by(Place.distance_km).all()
@@ -40,6 +41,6 @@ def map_view():
             "lat": p.latitude,
             "lng": p.longitude,
         }
-        for p in Place.query.all()
+        for p in Place.query.options(selectinload(Place.categories)).all()
     ]
     return render_template("map.html", places_json=data)
