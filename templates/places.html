@@ -28,6 +28,9 @@
   {% for p in places %}
   <div class="col-md-6 col-lg-4">
     <div class="card h-100 shadow-sm">
+      {% if p.image_src %}
+        <img src="{{ p.image_src }}" alt="" class="card-img-top place-thumb" loading="lazy">
+      {% endif %}
       <div class="card-body">
         <h2 class="h5 card-title">
           <a href="{{ url_for('public.place_detail', place_id=p.id) }}"

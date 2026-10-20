@@ -13,7 +13,7 @@
   {% if mode == 'new' %}Add a new place{% else %}Edit: {{ place.name }}{% endif %}
 </h1>
 
-<form method="post" novalidate class="row g-3">
+<form method="post" enctype="multipart/form-data" novalidate class="row g-3">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
   <div class="col-12">
@@ -92,13 +92,32 @@
     <textarea id="travel_tips" name="travel_tips" rows="3" class="form-control">{{ values.get('travel_tips', '') }}</textarea>
   </div>
 
-  <div class="col-12">
-    <label for="image_url" class="form-label">Image address (optional)</label>
+    <div class="col-12">
+    <label class="form-label d-block">Image (optional)</label>
+
+    {% if place and place.image_src %}
+      <div class="mb-2">
+        <img src="{{ place.image_src }}" alt="Current image" class="img-thumbnail" style="max-height:160px">
+        <div class="form-check mt-1">
+          <input class="form-check-input" type="checkbox" id="remove_image" name="remove_image" value="1">
+          <label class="form-check-label" for="remove_image">Remove current image</label>
+        </div>
+      </div>
+    {% endif %}
+
+    <label for="image_file" class="form-label small mb-1">Upload a picture (JPG, PNG or WebP, up to 5 MB)</label>
+    <input type="file" id="image_file" name="image_file" accept="image/jpeg,image/png,image/webp"
+           class="form-control {{ 'is-invalid' if errors.get('image_file') }}">
+    <div class="invalid-feedback">{{ errors.get('image_file') }}</div>
+
+    <label for="image_url" class="form-label small mt-2 mb-1">...or paste an image address</label>
     <input type="text" id="image_url" name="image_url" maxlength="300"
            class="form-control {{ 'is-invalid' if errors.get('image_url') }}"
            value="{{ values.get('image_url', '') }}" placeholder="https://...">
     <div class="invalid-feedback">{{ errors.get('image_url') }}</div>
-    <div class="form-text">Only use images you have permission to use, and credit the source (SRS section 6).</div>
+
+    <div class="form-text">Only use pictures you took or have permission to use, and credit the source
+      in the description (SRS section 6). If you do both, the uploaded file is used.</div>
   </div>
 
   <div class="col-12 d-flex gap-2">

@@ -33,6 +33,16 @@ class Place(db.Model):
     visit_minutes = db.Column(db.Integer, default=60)       # suggested time to spend there
 
     categories = db.relationship("Category", secondary=place_categories, backref="places")
+    
+    @property
+    def image_src(self):
+        """Address to use in <img src>: external link or an uploaded file."""
+        if not self.image_url:
+            return None
+        if self.image_url.startswith(("http://", "https://")):
+            return self.image_url
+        from flask import url_for
+        return url_for("static", filename=self.image_url)
 
     def __repr__(self):
         return f"<Place {self.name}>"

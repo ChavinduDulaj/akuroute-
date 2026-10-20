@@ -23,8 +23,8 @@
       {% endfor %}
     </p>
 
-    {% if place.image_url %}
-      <img src="{{ place.image_url }}" alt="{{ place.name }}" class="img-fluid rounded mb-3" loading="lazy">
+    {% if place.image_src %}
+        <img src="{{ place.image_src }}" alt="{{ place.name }}" class="img-fluid rounded mb-3" loading="lazy">
     {% endif %}
 
     <h2 class="h5">About</h2>
@@ -76,3 +76,9 @@
   L.marker([lat, lng]).addTo(map).bindPopup({{ place.name|tojson }}).openPopup();
 </script>
 {% endblock %}
+
+
+
+{% if place.image_src %}
+      <img src="{{ place.image_src }}" alt="{{ place.name }}" class="img-fluid rounded mb-3" loading="lazy">
+{% endif %}
