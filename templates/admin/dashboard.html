@@ -12,12 +12,12 @@
 <div class="table-responsive">
   <table class="table table-striped align-middle">
     <thead>
-      <tr><th>#</th><th>Name</th><th>Categories</th><th class="text-end">Distance (km)</th><th class="text-end">Actions</th></tr>
+      <tr><th>Name</th><th>Categories</th><th class="text-end">Distance (km)</th><th class="text-end">Actions</th></tr>
     </thead>
     <tbody>
       {% for p in places %}
       <tr>
-        <td>{{ p.id }}</td>
+        
         <td><a href="{{ url_for('public.place_detail', place_id=p.id) }}" class="text-decoration-none">{{ p.name }}</a></td>
         <td>{% for c in p.categories %}<span class="badge text-bg-success me-1">{{ c.name }}</span>{% endfor %}</td>
         <td class="text-end">{{ p.distance_km|round(1) }}</td>
